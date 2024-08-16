@@ -1,0 +1,10 @@
+singleQuote: true # Use single quotes instead of double quotes
+trailingComma: all # Include trailing commas in objects, arrays, etc.
+semi: true # Add semicolons at the end of statements
+jsxSingleQuote: false # Use single quotes in JSX
+bracketSpacing: true # Print spaces between brackets in object literals
+arrowParens: always # Always include parentheses around arrow function arguments
+printWidth: 80 # Specify the line length that Prettier will wrap on
+tabWidth: 2 # Number of spaces per indentation level
+useTabs: false # Indent lines with spaces instead of tabs
+endOfLine: lf # Use Line Feed only (\n) as line ending

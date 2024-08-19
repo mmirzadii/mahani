@@ -7,6 +7,8 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
+import { Provider } from 'react-redux';
+import store from '../redux/store.tsx';
 
 const cacheRtl = createCache({
   key: 'muirtl',
@@ -21,7 +23,9 @@ root.render(
   <React.StrictMode>
     <CacheProvider value={cacheRtl}>
       <ThemeProvider theme={theme}>
-        <App />
+        <Provider store={store}>
+          <App />
+        </Provider>
       </ThemeProvider>
     </CacheProvider>
   </React.StrictMode>,

@@ -33,6 +33,7 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginForm>({
+    // @ts-ignore
     resolver: yupResolver(validationSchema),
   });
 

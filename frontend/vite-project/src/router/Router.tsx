@@ -4,6 +4,7 @@ import HomePage from '../pages/Home/Index.tsx';
 import Footer from '../constant/Footer.tsx';
 import Index from '../pages/Login/Index.tsx';
 import SignupPage from '../pages/Signup/Index.tsx';
+import Home from '../pages/dashboard/Home/Home.tsx';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,15 @@ const router = createBrowserRouter([
       {
         path: 'signup/',
         element: <SignupPage />,
+      },
+    ],
+  },
+  {
+    path: 'dashboard/',
+    children: [
+      {
+        index: true,
+        element: <Home />,
       },
     ],
   },

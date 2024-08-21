@@ -16,6 +16,9 @@ const cacheRtl = createCache({
 });
 const theme = createTheme({
   direction: 'rtl',
+  typography: {
+    fontFamily: 'IRANSans, Arial, sans-serif',
+  },
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);

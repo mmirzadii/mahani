@@ -7,17 +7,12 @@ import Box from '@mui/material/Box';
 import myAxios from '../../setting/connectApi.ts';
 import LoadingModal from '../../components/LoadingModal.tsx';
 import { useState } from 'react';
+import withReactContent from 'sweetalert2-react-content';
+import Swal from 'sweetalert2';
 
 const validationSchema = yup.object().shape({
-  username: yup
-    .string()
-    .required('وارد کردن نام کاربری الزامی است.')
-    .min(4, 'نام کاربری دستکم باید 4 حرف داشته باشد.')
-    .matches(
-      new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$'),
-      'فقط از حروف و اعداد انگلیسی میتوانید استفاده کنید!',
-    ),
-  password: yup.string().min(6, 'گذرواژه باید دستکم دارای 6 حرف باشد.'),
+  username: yup.string().required('وارد کردن نام کاربری الزامی است.'),
+  password: yup.string().required('وارد کردن گذرواژه اجیاری است.'),
 });
 
 interface LoginForm {
@@ -27,6 +22,7 @@ interface LoginForm {
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
+  const MySwal = withReactContent(Swal);
 
   const {
     register,
@@ -43,15 +39,21 @@ const LoginPage = () => {
     }
     setLoading(true);
     myAxios
-      .post('/api-auth-token/', data)
+      .post('/api/token/', data)
       .then((data) => {
-        console.log(data.data.token);
-        if (!data?.data?.token) {
+        console.log(data);
+        if (!data) {
           return;
         }
-        window.localStorage.setItem('token', data.data.token);
+        window.localStorage.setItem('token-access', data.data.access);
+        window.localStorage.setItem('token-refresh', data.data.refresh);
       })
       .catch((errors) => {
+        MySwal.fire({
+          title: <strong>خطا</strong>,
+          html: <p>نام کاربری یا رمز عبور نادرست است.</p>,
+          icon: 'error',
+        });
         console.log(errors);
       })
       .finally(() => {

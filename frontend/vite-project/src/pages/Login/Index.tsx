@@ -9,6 +9,7 @@ import LoadingModal from '../../components/LoadingModal.tsx';
 import { useState } from 'react';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const validationSchema = yup.object().shape({
   username: yup.string().required('وارد کردن نام کاربری الزامی است.'),
@@ -23,7 +24,7 @@ interface LoginForm {
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const MySwal = withReactContent(Swal);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -47,6 +48,7 @@ const LoginPage = () => {
         }
         window.localStorage.setItem('token-access', data.data.access);
         window.localStorage.setItem('token-refresh', data.data.refresh);
+        navigate('/dashboard');
       })
       .catch((errors) => {
         MySwal.fire({

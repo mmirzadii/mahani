@@ -5,6 +5,7 @@ import Footer from '../constant/Footer.tsx';
 import Index from '../pages/Login/Index.tsx';
 import SignupPage from '../pages/Signup/Index.tsx';
 import Home from '../pages/dashboard/Home/Home.tsx';
+import DashboardProvider from '../pages/dashboard/DashboardProvider.tsx';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
   },
   {
     path: 'dashboard/',
+    element: (
+      <DashboardProvider>
+        <Outlet />
+      </DashboardProvider>
+    ),
     children: [
       {
         index: true,

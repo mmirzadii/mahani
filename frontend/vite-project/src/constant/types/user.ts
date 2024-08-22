@@ -1,15 +1,20 @@
 export interface User {
+  id: number;
   firstName: string;
   lastName: string;
-  province: string;
-  city: string;
   username: string;
-  phone_number: string;
-  password: string;
 }
 
 export interface Student extends User {
-  grade?: string;
+  province: string;
+  city: string;
+  birthDate: string;
+  phoneNumber: string;
+  grade?: string | null;
 }
 
-export interface Instructor extends User {}
+export interface Instructor extends User {
+  province: string;
+  city: string;
+  phoneNumber: string;
+}

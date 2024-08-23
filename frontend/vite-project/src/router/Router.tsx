@@ -6,6 +6,8 @@ import Index from '../pages/Login/Index.tsx';
 import SignupPage from '../pages/Signup/Index.tsx';
 import Home from '../pages/dashboard/Home/Home.tsx';
 import DashboardProvider from '../pages/dashboard/DashboardProvider.tsx';
+import ProfilePage from '../pages/dashboard/Profile/Index.tsx';
+import Sidebar from '../pages/dashboard/Sidebar.tsx';
 
 const router = createBrowserRouter([
   {
@@ -35,14 +37,21 @@ const router = createBrowserRouter([
   {
     path: 'dashboard/',
     element: (
-      <DashboardProvider>
-        <Outlet />
-      </DashboardProvider>
+      <>
+        <Sidebar />
+        <DashboardProvider>
+          <Outlet />
+        </DashboardProvider>
+      </>
     ),
     children: [
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: 'profile/',
+        element: <ProfilePage />,
       },
     ],
   },

@@ -17,23 +17,27 @@ import {
 import { Menu, Home, Lock } from '@mui/icons-material';
 import { useState } from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Link } from 'react-router-dom';
 
 const listItems = [
   {
     listIcon: <Home />,
     listText: 'خانه',
+    path: '',
   },
   {
     listIcon: <AccountCircleIcon />,
     listText: 'پروفایل',
+    path: 'profile',
   },
   {
     listIcon: <Lock />,
     listText: 'خروج از حساب کاربری',
+    path: '/',
   },
 ];
 
-export default function App() {
+export default function Sidebar() {
   const [open, setOpen] = useState(false);
 
   const toggleSlider = () => {
@@ -57,31 +61,35 @@ export default function App() {
             width: '13rem',
             height: '13rem',
           }}
-          src="./public/dashboard/Avatar.jpg"
-          alt="provile"
+          src="/dashboard/Avatar.jpg"
+          alt="profile"
         />
       </Box>
       <Divider />
 
       <List>
         {listItems.map((listItem, index) => (
-          <ListItem
-            style={{
-              color: '#6c5b42',
-              fontWeight: 'bold',
-            }}
-            button
+          <Link
             key={index}
+            to={listItem.path}
+            // style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <ListItemIcon
+            <ListItem
               style={{
                 color: '#6c5b42',
+                fontWeight: 'bold',
               }}
             >
-              {listItem.listIcon}
-            </ListItemIcon>
-            <ListItemText primary={listItem.listText} />
-          </ListItem>
+              <ListItemIcon
+                style={{
+                  color: '#6c5b42',
+                }}
+              >
+                {listItem.listIcon}
+              </ListItemIcon>
+              <ListItemText primary={listItem.listText} />
+            </ListItem>
+          </Link>
         ))}
       </List>
     </Box>

@@ -1,26 +1,17 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from '../../setting/connectApi.ts';
-import { Student } from '../../constant/types/user.ts';
 import myAxios from '../../setting/connectApi.ts';
+import { Student } from '../../constant/types/user.ts';
 import { useNavigate } from 'react-router-dom';
 
 export const getStudent = createAsyncThunk('student/get', async () => {
-  let out;
-  await myAxios
-    .get('/current_user/')
-    .then((response) => {
-      out = response.data;
-    })
-    .catch((error) => {
-      out = error.data;
-    });
-  return out; // No need to use JSON.parse here
+  return await myAxios.get('/current_user/'); // No need to use JSON.parse here
 });
 
 export const editStudent = createAsyncThunk(
   'student/edit',
-  async (data: Partial<Student>) => {
-    return await axios.patch('/student/', { data });
+  async (data: { user: Partial<Student> }) => {
+    return await axios.patch('/current_user/', data);
   },
 );
 
@@ -44,8 +35,9 @@ const studentSlice = createSlice({
     builder.addCase(getStudent.fulfilled, (state: StudentState, action) => {
       if (action.payload) {
         // @ts-ignore
-        const { user, ...rest } = action.payload;
-        state.student = { user, ...rest }; // or handle as needed
+        const { user, ...rest } = action.payload.data;
+        state.student = { ...user, ...rest }; // or handle as needed
+        console.log(state.student);
       }
       state.loading = false;
     });
@@ -54,6 +46,24 @@ const studentSlice = createSlice({
     });
     builder.addCase(getStudent.rejected, (state) => {
       useNavigate()('/login');
+      state.loading = false;
+    });
+
+    builder.addCase(editStudent.fulfilled, (state, action) => {
+      if (action.payload) {
+        // @ts-ignore
+        const { user, ...rest } = action.payload.data;
+        state.student = { ...user, ...rest }; // or handle as needed
+        console.log(state.student);
+      }
+      state.loading = false;
+      console.log(action);
+    });
+    builder.addCase(editStudent.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(editStudent.rejected, (state, action) => {
+      console.log(action);
       state.loading = false;
     });
   },

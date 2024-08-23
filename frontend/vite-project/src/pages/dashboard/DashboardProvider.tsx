@@ -23,7 +23,7 @@ function DashboardProvider(props: any) {
 
   return (
     <>
-      {props.children}
+      {!loading && props.children}
       <LoadingModal open={loading} onClose={() => {}}></LoadingModal>
     </>
   );

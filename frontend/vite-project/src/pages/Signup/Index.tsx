@@ -63,12 +63,10 @@ const SignupPage = () => {
     const { first_name, last_name, username, password, ...extraData } = data;
     const user = { first_name, last_name, username, password };
     const sentData = { user, ...extraData };
-    console.log(JSON.stringify(sentData));
-    console.log(JSON.stringify(sentData));
 
     myAxios
       .post('/student/', sentData)
-      .then((data) => {
+      .then(() => {
         console.log(sentData);
         MySwal.fire({
           title: <strong>تبریک</strong>,
@@ -76,7 +74,6 @@ const SignupPage = () => {
           icon: 'success',
         });
         navigate('/login/');
-        window.localStorage.setItem('token', data.data.token);
       })
       .catch((errors) => {
         setLoading(false);

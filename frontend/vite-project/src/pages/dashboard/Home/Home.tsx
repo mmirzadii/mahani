@@ -1,11 +1,5 @@
-import SimpleList from '../../../FixedOptions/Sidebar.tsx';
-
 function Home() {
-  return (
-    <div>
-      <SimpleList />
-    </div>
-  );
+  return <div></div>;
 }
 
 export default Home;

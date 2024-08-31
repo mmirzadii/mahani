@@ -9,7 +9,7 @@ import LoadingModal from '../../components/LoadingModal.tsx';
 import { useState } from 'react';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const validationSchema = yup.object().shape({
   username: yup.string().required('وارد کردن نام کاربری الزامی است.'),
@@ -95,6 +95,17 @@ const LoginPage = () => {
             >
               ورود
             </Button>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <Link
+              to={'/signup'}
+              style={{
+                color: 'blue',
+                textDecoration: 'underline',
+              }}
+            >
+              اگر حساب ندارید وارد صفحه ثبت نام شوید.
+            </Link>
           </Box>
         </form>
       </div>

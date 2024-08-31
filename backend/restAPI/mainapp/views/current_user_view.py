@@ -14,8 +14,7 @@ class ProtectedView(views.APIView):
         try:
 
             user = request.user
-            student = user.student  # or use user.student_profile if you used related_name
-            serializer = CustomUserSerializer(student)
+            serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)

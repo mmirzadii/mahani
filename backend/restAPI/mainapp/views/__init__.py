@@ -5,4 +5,4 @@ from .Message import MessageViewSet
 from .Question import QuestionViewSet
 from .Assignment import AssignmentViewSet
 from .Group import GroupViewSet
-from .SentAssignment import SentQuestionAnswerViewSet
+from .SentQuestionAnswer import SentQuestionAnswerViewSet

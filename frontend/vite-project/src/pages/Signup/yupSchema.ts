@@ -3,8 +3,8 @@ import iranCities from '../../constant/IranCities.tsx';
 
 //yup validation schema
 const validationSchema = yup.object().shape({
-  first_name: yup.string().required('وارد کردن نام اجباری است.'),
-  last_name: yup.string().required('وارد کردن نام خانوادگی اجباری است.'),
+  firstName: yup.string().required('وارد کردن نام اجباری است.'),
+  lastName: yup.string().required('وارد کردن نام خانوادگی اجباری است.'),
   province: yup
     .string()
     .required('وارد کردن استان اجباری است!')
@@ -21,8 +21,8 @@ const validationSchema = yup.object().shape({
     .required('وارد کردن تاریخ تولد اجباری است.')
     .min(new Date('1900-1-1'), 'شما از محدوده ی سنی خارج هستید.')
     .max(new Date(), 'شما از محدوده ی زمانی خارج هستید.'),
-  school: yup.string().required('وارد کردن استان اجباری است!'),
-  phone_number: yup
+  school: yup.string().required('وارد کردن مدرسه اجباری است!'),
+  phoneNumber: yup
     .string()
     .matches(
       /^(\+?\d{1,3})?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/,

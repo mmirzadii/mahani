@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from mainapp.models import Event
 from mainapp.permissions.Messages import IsEventManager
@@ -9,6 +10,7 @@ from mainapp.serializers import EventSerializer
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
+    authentication_classes = [JWTAuthentication]
     http_method_name = ("post", "get", "put", "delete")
     search_fields = ("id", "username", 'host')
     ordering_fields = "__all__"

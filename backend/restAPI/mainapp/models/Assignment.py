@@ -7,5 +7,5 @@ class Assignment(models.Model):
     description = models.CharField(max_length=30)
     content = models.FileField(null=True)
     event = models.ForeignKey("mainapp.Event", on_delete=models.CASCADE)
-    date_joined = models.DateTimeField(default=timezone.now)
+    timestamp = models.DateTimeField(default=timezone.now)
 

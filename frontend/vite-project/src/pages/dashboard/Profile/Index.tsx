@@ -16,24 +16,30 @@ import {
 import { deepPurple } from '@mui/material/colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../redux/store.tsx';
-import { Student } from '../../../constant/types/user.ts';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { editStudent } from '../../../redux/reducers/StudentSlice.tsx';
+import {
+  deleteUser,
+  editUser,
+  resetStatus,
+  UserState,
+} from '../../../redux/reducers/UserSlice.tsx';
+import showAlert from '../../../functional/ShowMessage.tsx';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileForm {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   username: string;
 }
 
 const schemaValidation = yup.object().shape({
-  first_name: yup
+  firstName: yup
     .string()
     .required('نام اجباری است!')
     .min(2, 'نام حداقل طول 2 دارد!'),
-  last_name: yup
+  lastName: yup
     .string()
     .required('نام خانوادگی اجباری است!')
     .min(2, 'حداقل طول نام خانوادگی 2 است!'),
@@ -48,6 +54,7 @@ const schemaValidation = yup.object().shape({
 });
 
 function ProfilePage() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -57,12 +64,27 @@ function ProfilePage() {
     mode: 'onChange',
   });
   const dispatch = useDispatch<AppDispatch>();
-  const student = useSelector<RootState, Student | null>(
-    (state) => state?.student.student,
+  const { user, message, status } = useSelector<RootState, UserState>(
+    (state) => state?.user,
   );
   const onSubmit = async (data: ProfileForm) => {
-    console.log(data);
-    await dispatch(editStudent({ user: data }));
+    let sentData: any = data;
+    if (user?.username == data.username) {
+      const { username, ...rest } = data;
+      sentData = rest;
+    }
+    await dispatch(editUser({ user: sentData }));
+    showAlert(status, message, () => {
+      dispatch(resetStatus());
+    });
+  };
+
+  const deleteAccount = async () => {
+    await dispatch(deleteUser());
+    showAlert(status, message, () => {
+      dispatch(resetStatus());
+    });
+    navigate('/');
   };
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -84,10 +106,10 @@ function ProfilePage() {
               </Grid>
               <Grid item xs={12} sm={8}>
                 <Typography variant="h5">
-                  {student?.first_name + ' ' + student?.last_name}
+                  {user?.firstName + ' ' + user?.lastName}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                  {student?.province + ', ' + student?.city}
+                  {user?.province + ', ' + user?.city}
                 </Typography>
               </Grid>
 
@@ -97,24 +119,24 @@ function ProfilePage() {
                     <TextField
                       label="نام"
                       variant="outlined"
-                      defaultValue={student?.first_name}
+                      defaultValue={user?.firstName}
                       margin="normal"
                       fullWidth
-                      {...register('first_name')}
-                      error={!!errors.first_name?.message}
-                      helperText={errors.first_name?.message}
+                      {...register('firstName')}
+                      error={!!errors.firstName?.message}
+                      helperText={errors.firstName?.message}
                     />
                   </Grid>
                   <Grid item xs={6}>
                     <TextField
                       label="نام خانوادگی"
                       variant="outlined"
-                      defaultValue={student?.last_name}
+                      defaultValue={user?.lastName}
                       margin="normal"
                       fullWidth
-                      {...register('last_name')}
-                      error={!!errors.last_name?.message}
-                      helperText={errors.last_name?.message}
+                      {...register('lastName')}
+                      error={!!errors.lastName?.message}
+                      helperText={errors.lastName?.message}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -127,7 +149,7 @@ function ProfilePage() {
                       </InputLabel>
                       <OutlinedInput
                         error={!!errors.username?.message}
-                        defaultValue={student?.username}
+                        defaultValue={user?.username}
                         id="username"
                         startAdornment={
                           <InputAdornment position="start">@</InputAdornment>
@@ -158,8 +180,13 @@ function ProfilePage() {
                 >
                   ذخیره تغییرات
                 </Button>
-                <Button variant="contained" color="warning" sx={{ mt: 2 }}>
-                  تغییر رمز عبور
+                <Button
+                  variant="contained"
+                  color={'error'}
+                  sx={{ mt: 2 }}
+                  onClick={deleteAccount}
+                >
+                  حذف حساب کاربری
                 </Button>
               </Grid>
             </Grid>

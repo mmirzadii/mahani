@@ -12,16 +12,16 @@ import { InputDatePicker } from 'jalaali-react-date-picker';
 import validationSchema from './yupSchema.ts';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface SignupForm {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   province: string;
   city: string;
   birthDate: string;
   school: string;
-  phone_number: string;
+  phoneNumber: string;
   username: string;
   password: string;
   passwordConfirm?: string;
@@ -60,8 +60,8 @@ const SignupPage = () => {
     }
     setLoading(true);
     data.birthDate = JSON.stringify(data.birthDate).split('T')[0].slice(1);
-    const { first_name, last_name, username, password, ...extraData } = data;
-    const user = { first_name, last_name, username, password };
+    const { firstName, lastName, username, password, ...extraData } = data;
+    const user = { firstName, lastName, username, password };
     const sentData = { user, ...extraData };
 
     myAxios
@@ -78,7 +78,7 @@ const SignupPage = () => {
       .catch((errors) => {
         setLoading(false);
         console.log(errors);
-        let message = 'ساخت حساب کاربری موقییت آمیز نیود.';
+        let message = 'ساخت حساب کاربری موفقیت آمیز نیود.';
         if (
           errors.response?.data?.user?.username[0] ==
           'A user with that username already exists.'
@@ -117,9 +117,9 @@ const SignupPage = () => {
                 label="نام"
                 variant="outlined"
                 sx={{ width: '100%', m: 1 }}
-                {...register('first_name')}
-                error={!!errors.first_name?.message}
-                helperText={errors.first_name?.message}
+                {...register('firstName')}
+                error={!!errors.firstName?.message}
+                helperText={errors.firstName?.message}
               />
             </div>
             <div>
@@ -128,9 +128,9 @@ const SignupPage = () => {
                 label="نام خانوادگی"
                 variant="outlined"
                 sx={{ width: '100%', m: 1 }}
-                {...register('last_name')}
-                error={!!errors.last_name?.message}
-                helperText={errors.last_name?.message}
+                {...register('lastName')}
+                error={!!errors.lastName?.message}
+                helperText={errors.lastName?.message}
               />
             </div>
 
@@ -204,9 +204,9 @@ const SignupPage = () => {
               label="شماره همراه"
               variant="outlined"
               sx={{ width: '100%', m: 1 }}
-              {...register('phone_number')}
-              error={!!errors.phone_number?.message}
-              helperText={errors.phone_number?.message}
+              {...register('phoneNumber')}
+              error={!!errors.phoneNumber?.message}
+              helperText={errors.phoneNumber?.message}
             />
           </div>
           <Box
@@ -269,6 +269,14 @@ const SignupPage = () => {
             <Button type="submit" variant="contained" size={'large'}>
               ثبت نام
             </Button>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <Link
+              to={'/login'}
+              style={{ textDecoration: 'underline', color: 'blue' }}
+            >
+              اگر قبلا ثبت نام کردید وارد صفحه ورود شوید.
+            </Link>
           </Box>
         </form>
       </div>

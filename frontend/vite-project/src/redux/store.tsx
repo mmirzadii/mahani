@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import StudentReducer from './reducers/StudentSlice.tsx';
+import userReducer from './reducers/UserSlice.tsx';
+import eventReducer from './reducers/EventSlice.tsx';
 
 const store = configureStore({
   reducer: {
-    student: StudentReducer,
+    user: userReducer,
+    event: eventReducer,
   },
 });
 

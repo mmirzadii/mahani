@@ -3,16 +3,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Autocomplete, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import myAxios from '../../setting/connectApi.ts';
 import LoadingModal from '../../components/LoadingModal.tsx';
 import iranCities from '../../constant/IranCities.tsx';
 import { useEffect, useState } from 'react';
 import 'jalaali-react-date-picker/lib/styles/index.css';
 import { InputDatePicker } from 'jalaali-react-date-picker';
 import validationSchema from './yupSchema.ts';
-import withReactContent from 'sweetalert2-react-content';
-import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store.tsx';
+import { createUser } from '../../redux/reducers/UserSlice.tsx';
+import showMessage from '../../functional/ShowMessage.tsx';
 
 interface SignupForm {
   firstName: string;
@@ -29,9 +30,8 @@ interface SignupForm {
 
 const SignupPage = () => {
   const [loading, setLoading] = useState(false);
-  const MySwal = withReactContent(Swal);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -55,41 +55,17 @@ const SignupPage = () => {
   }, [selectedProvince, setValue]);
 
   const onSubmit: SubmitHandler<SignupForm> = async (data: SignupForm) => {
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
     setLoading(true);
     data.birthDate = JSON.stringify(data.birthDate).split('T')[0].slice(1);
-    const { firstName, lastName, username, password, ...extraData } = data;
-    const user = { firstName, lastName, username, password };
-    const sentData = { user, ...extraData };
-
-    myAxios
-      .post('/student/', sentData)
+    dispatch(createUser(data))
+      .unwrap()
       .then(() => {
-        console.log(sentData);
-        MySwal.fire({
-          title: <strong>تبریک</strong>,
-          html: <p>حساب کاربری شما با موفقیت ساخته شد!</p>,
-          icon: 'success',
+        showMessage('success', 'عملیات موفق بود.', () => {
+          navigate('/login/');
         });
-        navigate('/login/');
       })
-      .catch((errors) => {
-        setLoading(false);
-        console.log(errors);
-        let message = 'ساخت حساب کاربری موفقیت آمیز نیود.';
-        if (
-          errors.response?.data?.user?.username[0] ==
-          'A user with that username already exists.'
-        ) {
-          message = 'نام کاربری از قبل وجود دارد!';
-        }
-        MySwal.fire({
-          title: <strong>ساخت ناموفق</strong>,
-          html: <i>{message}</i>,
-          icon: 'error',
-        });
+      .catch((error) => {
+        showMessage('error', error);
       })
       .finally(() => {
         setLoading(false);

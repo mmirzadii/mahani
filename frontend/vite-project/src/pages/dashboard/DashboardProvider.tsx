@@ -1,25 +1,36 @@
-import { useEffect } from 'react';
-import myAxios from '../../setting/connectApi.ts';
+import { useEffect, useState } from 'react';
+import myAxios from '../../setting/connectApi';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { getUser, resetStatus } from '../../redux/reducers/UserSlice.tsx';
-import { AppDispatch, RootState } from '../../redux/store.tsx';
-import LoadingModal from '../../components/LoadingModal.tsx';
+import { useDispatch } from 'react-redux';
+import LoadingModal from '../../components/LoadingModal';
+import { AppDispatch } from '../../redux/store.tsx';
+import { getProfile } from '../../redux/reducers/SessionSlice.tsx';
 
 function DashboardProvider(props: any) {
   const dispatch = useDispatch<AppDispatch>();
-  const loading = useSelector<RootState, boolean>(
-    (state) => state?.user.loading,
-  );
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    if (!localStorage.getItem('token-access')) {
-      navigate('login');
+    setLoading(true);
+    const token = localStorage.getItem('token-access');
+
+    if (!token) {
+      navigate('/login'); // Ensure the path matches your route
+      return;
     }
-    myAxios.defaults.headers['Authorization'] =
-      `Bearer ${localStorage.getItem('token-access')}`;
-    dispatch(getUser());
-  }, []);
+
+    myAxios.defaults.headers['Authorization'] = `Bearer ${token}`;
+
+    dispatch(getProfile())
+      .unwrap()
+      .catch(() => {
+        navigate('/login'); // Redirect if the token is invalid
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [dispatch, navigate]); // Add dispatch and navigate to the dependency array
 
   return (
     <>
@@ -27,9 +38,9 @@ function DashboardProvider(props: any) {
       <LoadingModal
         open={loading}
         onClose={() => {
-          dispatch(resetStatus());
+          setLoading(false);
         }}
-      ></LoadingModal>
+      />
     </>
   );
 }

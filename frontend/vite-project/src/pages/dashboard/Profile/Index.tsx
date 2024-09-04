@@ -19,14 +19,11 @@ import { AppDispatch, RootState } from '../../../redux/store.tsx';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  deleteUser,
-  editUser,
-  resetStatus,
-  UserState,
-} from '../../../redux/reducers/UserSlice.tsx';
-import showAlert from '../../../functional/ShowMessage.tsx';
+import { deleteUser, editUser } from '../../../redux/reducers/UserSlice.tsx';
 import { useNavigate } from 'react-router-dom';
+import { User } from '../../../constant/types/user.ts';
+import showMessage from '../../../functional/ShowMessage.tsx';
+import { getProfile } from '../../../redux/reducers/SessionSlice.tsx';
 
 interface ProfileForm {
   firstName: string;
@@ -64,26 +61,28 @@ function ProfilePage() {
     mode: 'onChange',
   });
   const dispatch = useDispatch<AppDispatch>();
-  const { user, message, status } = useSelector<RootState, UserState>(
-    (state) => state?.user,
+  const currentUser = useSelector<RootState, User | null>(
+    (state) => state.session.currentUser,
   );
   const onSubmit = async (data: ProfileForm) => {
-    let sentData: any = data;
-    if (user?.username == data.username) {
-      const { username, ...rest } = data;
-      sentData = rest;
+    if (!currentUser || !currentUser.id) {
+      return;
     }
-    await dispatch(editUser({ user: sentData }));
-    showAlert(status, message, () => {
-      dispatch(resetStatus());
+    dispatch(editUser({ ...data, id: currentUser.id })).then(() => {
+      dispatch(getProfile());
     });
   };
 
   const deleteAccount = async () => {
-    await dispatch(deleteUser());
-    showAlert(status, message, () => {
-      dispatch(resetStatus());
+    if (!currentUser?.id) {
+      return;
+    }
+    await dispatch(deleteUser(currentUser.id)).then(() => {
+      showMessage('success', 'یا موفقیت حذف شد.', () => {
+        navigate('/');
+      });
     });
+
     navigate('/');
   };
   return (
@@ -106,10 +105,10 @@ function ProfilePage() {
               </Grid>
               <Grid item xs={12} sm={8}>
                 <Typography variant="h5">
-                  {user?.firstName + ' ' + user?.lastName}
+                  {currentUser?.firstName + ' ' + currentUser?.lastName}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                  {user?.province + ', ' + user?.city}
+                  {currentUser?.province + ', ' + currentUser?.city}
                 </Typography>
               </Grid>
 
@@ -119,7 +118,7 @@ function ProfilePage() {
                     <TextField
                       label="نام"
                       variant="outlined"
-                      defaultValue={user?.firstName}
+                      defaultValue={currentUser?.firstName}
                       margin="normal"
                       fullWidth
                       {...register('firstName')}
@@ -131,7 +130,7 @@ function ProfilePage() {
                     <TextField
                       label="نام خانوادگی"
                       variant="outlined"
-                      defaultValue={user?.lastName}
+                      defaultValue={currentUser?.lastName}
                       margin="normal"
                       fullWidth
                       {...register('lastName')}
@@ -149,7 +148,7 @@ function ProfilePage() {
                       </InputLabel>
                       <OutlinedInput
                         error={!!errors.username?.message}
-                        defaultValue={user?.username}
+                        defaultValue={currentUser?.username}
                         id="username"
                         startAdornment={
                           <InputAdornment position="start">@</InputAdornment>
@@ -168,7 +167,6 @@ function ProfilePage() {
               <Grid
                 item
                 xs={12}
-                spacing={2}
                 sx={{ justifyContent: 'space-between', display: 'flex' }}
               >
                 <Button

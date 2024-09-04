@@ -5,7 +5,7 @@ from mainapp.models import Group, Event
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
-    http_method_name = ("post", "get", "put", "delete")
+    http_method_name = ("post", "get", "patch", "delete")
     search_fields = ("id", "assignment")
     ordering_fields = "__all__"
 
@@ -16,3 +16,5 @@ class GroupViewSet(viewsets.ModelViewSet):
         except:
             raise ValueError("event does not found")
         return Group.objects.filter(event=event)
+
+    

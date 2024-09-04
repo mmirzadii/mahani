@@ -11,3 +11,4 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = "__all__"
 
+

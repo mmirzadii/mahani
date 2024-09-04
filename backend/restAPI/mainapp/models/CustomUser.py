@@ -10,6 +10,7 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, username, password, **extra_fields):
         if not username:
             raise ValueError("The username must be set")
+        extra_fields.setdefault("is_active", True)
         user = self.model(username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)

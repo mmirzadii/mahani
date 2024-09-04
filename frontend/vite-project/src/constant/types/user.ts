@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id?: number;
   firstName: string;
   lastName: string;
   username: string;
@@ -9,9 +9,9 @@ export interface User {
   school: string;
   birthDate: string;
   phoneNumber: string;
-  lastLogin: string;
-  isActive: boolean;
-  isStaff: boolean;
-  isSuperUser: boolean;
-  dateJoined: string;
+  lastLogin?: string;
+  isActive?: boolean;
+  isStaff?: boolean;
+  isSuperUser?: boolean;
+  dateJoined?: string;
 }

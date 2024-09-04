@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../redux/store.tsx';
 import { getEvents } from '../../../redux/reducers/EventSlice.tsx';
 import { Event } from '../../../constant/types/event.ts';
+import { getCurrentEvent } from '../../../redux/reducers/SessionSlice.tsx';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#e1f5fe' : '#e1f5fe',
   ...theme.typography.h5,
@@ -36,6 +37,10 @@ function Home() {
   useEffect(() => {
     dispatch(getEvents());
   }, []);
+  const openEvent = (id: number) => {
+    console.log('jjj');
+    dispatch(getCurrentEvent(id));
+  };
   return (
     <React.Fragment>
       <Container maxWidth={'xl'}>
@@ -83,6 +88,10 @@ function Home() {
                             paddingLeft: '20px',
                             paddingBottom: '10px',
                             paddingTop: '10px',
+                            minWidth: '8rem',
+                          }}
+                          onClick={() => {
+                            openEvent(value.id);
                           }}
                         >
                           <Typography>ورود</Typography>

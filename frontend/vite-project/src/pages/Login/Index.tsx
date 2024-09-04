@@ -4,12 +4,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import myAxios from '../../setting/connectApi.ts';
 import LoadingModal from '../../components/LoadingModal.tsx';
 import { useState } from 'react';
-import withReactContent from 'sweetalert2-react-content';
-import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store.tsx';
+import { login } from '../../redux/reducers/SessionSlice.tsx';
+import showMessage from '../../functional/ShowMessage.tsx';
 
 const validationSchema = yup.object().shape({
   username: yup.string().required('وارد کردن نام کاربری الزامی است.'),
@@ -23,7 +24,7 @@ interface LoginForm {
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
-  const MySwal = withReactContent(Swal);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const {
     register,
@@ -35,31 +36,14 @@ const LoginPage = () => {
   });
 
   const onSubmit: SubmitHandler<LoginForm> = async (data: LoginForm) => {
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
-    setLoading(true);
-    myAxios
-      .post('/api/token/', data)
-      .then((data) => {
-        console.log(data);
-        if (!data) {
-          return;
-        }
-        window.localStorage.setItem('token-access', data.data.access);
-        window.localStorage.setItem('token-refresh', data.data.refresh);
-        navigate('/dashboard');
-      })
-      .catch((errors) => {
-        MySwal.fire({
-          title: <strong>خطا</strong>,
-          html: <p>نام کاربری یا رمز عبور نادرست است.</p>,
-          icon: 'error',
+    dispatch(login(data))
+      .then(() => {
+        showMessage('success', 'با موفقیت وارد شدید.', () => {
+          navigate('/dashboard');
         });
-        console.log(errors);
       })
-      .finally(() => {
-        setLoading(false);
+      .catch((error) => {
+        showMessage('error', error);
       });
   };
   return (

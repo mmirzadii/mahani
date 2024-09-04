@@ -1,14 +1,17 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from '../../setting/connectApi.ts';
 import myAxios from '../../setting/connectApi.ts';
 import { User } from '../../constant/types/user.ts';
 import camelcaseKeys from 'camelcase-keys';
+import { MakeRequired } from '../../functional/TypeConvert.tsx';
+import camelToSnake from '../../functional/ConvertCase.tsx';
+import { AxiosError } from 'axios';
+import { ErrorResponse } from 'react-router-dom';
 
-export const getUser = createAsyncThunk<User, void, { rejectValue: string }>(
-  'user/get',
+export const getUsers = createAsyncThunk<User[], void, { rejectValue: string }>(
+  'users/get',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await myAxios.get('/current_user/');
+      const response = await myAxios.get('/user/');
       return await camelcaseKeys(response.data, { deep: true });
     } catch (error) {
       return rejectWithValue('دریافت کاربر ناموفق بود.');
@@ -16,98 +19,81 @@ export const getUser = createAsyncThunk<User, void, { rejectValue: string }>(
   },
 );
 
+export const createUser = createAsyncThunk<User, User, { rejectValue: string }>(
+  'user/create',
+  async (user, { rejectWithValue }) => {
+    try {
+      const snakeUser = camelToSnake(user);
+      const response = await myAxios.post('/user/', snakeUser);
+      return await camelcaseKeys(response.data, { deep: true });
+    } catch (error) {
+      console.log(error);
+      const axiosError = error as AxiosError;
+      const errorData = axiosError.response?.data as ErrorResponse;
+      if (errorData && 'username' in errorData) {
+        return rejectWithValue('نام کاربری از قبل وجود دارد.');
+      }
+      return rejectWithValue('ساخت حساب ممکن نیست.');
+    }
+  },
+);
+
 export const editUser = createAsyncThunk<
   User,
-  { user: Partial<User> },
+  MakeRequired<Partial<User>, 'id'>,
   { rejectValue: string }
->('user/edit', async (data, { rejectWithValue }) => {
+>('user/edit', async (user, { rejectWithValue }) => {
   try {
-    const response = await axios.patch('/current_user/', data);
+    const snakeUser = camelToSnake(user);
+    const response = await myAxios.patch(`/user/${user.id}/`, snakeUser);
     return await camelcaseKeys(response.data, { deep: true });
   } catch (error) {
     return rejectWithValue('ویرایش کاریر ناموفق یود.');
   }
 });
 
-export const deleteUser = createAsyncThunk<void, void, { rejectValue: string }>(
-  'user/delete',
-  async (_, { rejectWithValue }) => {
-    try {
-      await axios.delete('/current_user/');
-    } catch (error) {
-      return rejectWithValue('حذف کاربر ناموفق بود.');
-    }
-  },
-);
+export const deleteUser = createAsyncThunk<
+  number,
+  number,
+  { rejectValue: string }
+>('user/delete', async (id, { rejectWithValue }) => {
+  try {
+    await myAxios.delete(`/user/${id}/`);
+    return id;
+  } catch (error) {
+    return rejectWithValue('حذف کاربر ناموفق بود.');
+  }
+});
 export interface UserState {
-  user: User | null;
-  loading: boolean;
-  message: string | undefined;
-  status: 'success' | 'error' | null;
+  users: User[];
 }
 
 const initialState: UserState = {
-  user: null,
-  loading: false,
-  message: '',
-  status: null,
+  users: [],
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {
-    resetStatus: (state) => {
-      state.message = '';
-      state.status = null;
-      state.loading = false;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getUser.fulfilled, (state: UserState, action) => {
-      state.user = action.payload;
-      state.status = 'success';
-      state.loading = false;
+    builder.addCase(getUsers.fulfilled, (state: UserState, action) => {
+      state.users = action.payload;
     });
-    builder.addCase(getUser.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getUser.rejected, (state, action) => {
-      state.message = action.error.message;
-      state.status = 'error';
-      state.loading = false;
+
+    builder.addCase(createUser.fulfilled, (state: UserState, action) => {
+      state.users.push(action.payload);
     });
 
     builder.addCase(editUser.fulfilled, (state, action) => {
-      state.user = action.payload;
-      state.status = 'success';
-      state.loading = false;
-    });
-    builder.addCase(editUser.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(editUser.rejected, (state, action) => {
-      state.message = action.error.message;
-      state.status = 'error';
-      state.loading = false;
+      state.users = state.users.filter((user) => user.id != action.payload.id);
+      state.users.push(action.payload);
     });
 
-    builder.addCase(deleteUser.fulfilled, (state) => {
-      state.user = null;
-      state.status = 'success';
-      state.message = 'با موفقیت حذف شد.';
-      state.loading = false;
-    });
-    builder.addCase(deleteUser.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(deleteUser.rejected, (state) => {
-      state.message = 'مشکلی پیش آمده است.';
-      state.status = 'error';
-      state.loading = false;
+    builder.addCase(deleteUser.fulfilled, (state, action) => {
+      state.users = state.users.filter((user) => user.id != action.payload);
     });
   },
 });
 
 export default userSlice.reducer;
-export const { resetStatus } = userSlice.actions;

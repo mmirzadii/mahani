@@ -70,6 +70,7 @@ TEMPLATES = [
     },
 ]
 
+
 AUTH_USER_MODEL = 'mainapp.CustomUser'
 
 WSGI_APPLICATION = 'project.wsgi.application'

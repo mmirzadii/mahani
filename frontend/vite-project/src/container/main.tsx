@@ -19,6 +19,12 @@ const theme = createTheme({
   typography: {
     fontFamily: 'IRANSans, Arial, sans-serif',
   },
+  palette: {
+    primary: {
+      light: '#dbdeff',
+      main: '#4857f9',
+    },
+  },
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);

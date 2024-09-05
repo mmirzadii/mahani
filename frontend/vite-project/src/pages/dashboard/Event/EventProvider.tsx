@@ -11,13 +11,13 @@ function EventProvider(props: any) {
   const event = useSelector<RootState, Event | null>(
     (state) => state.session.currentEvent,
   );
-
   useEffect(() => {
     setLoading(true);
     if (!event) {
       navigate('/dashboard/');
       return;
     }
+
     setLoading(false);
   }, []);
 

@@ -12,6 +12,6 @@ export interface User {
   lastLogin?: string;
   isActive?: boolean;
   isStaff?: boolean;
-  isSuperUser?: boolean;
+  isSuperuser?: boolean;
   dateJoined?: string;
 }

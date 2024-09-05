@@ -1,13 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import eventReducer from './reducers/EventSlice.tsx';
-import sessionSlice from './reducers/SessionSlice.tsx';
-import userSlice from './reducers/UserSlice.tsx';
+import sessionReducer from './reducers/SessionSlice.tsx';
+import userReducer from './reducers/UserSlice.tsx';
+import groupReducer from './reducers/GroupSlice.tsx';
+import assignmentReducer from './reducers/AssignmentSlice.tsx';
 
 const store = configureStore({
   reducer: {
-    session: sessionSlice,
-    user: userSlice,
+    session: sessionReducer,
+    user: userReducer,
     event: eventReducer,
+    group: groupReducer,
+    assignment: assignmentReducer,
   },
 });
 

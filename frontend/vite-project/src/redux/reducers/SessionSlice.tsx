@@ -109,7 +109,6 @@ const sessionSlice = createSlice({
       state.message = action.error.message;
     });
     builder.addCase(getCurrentEvent.fulfilled, (state, action) => {
-      console.log(action.payload);
       state.currentEvent = action.payload;
     });
   },

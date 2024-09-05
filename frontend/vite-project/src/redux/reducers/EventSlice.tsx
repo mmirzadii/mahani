@@ -8,7 +8,7 @@ export const getEvents = createAsyncThunk<
   Event[],
   void,
   { rejectValue: string }
->('event/get', async (_, { rejectWithValue }) => {
+>('events/get', async (_, { rejectWithValue }) => {
   try {
     const response = await myAxios.get('/event/');
     return await camelcaseKeys(response.data.results, { deep: true });

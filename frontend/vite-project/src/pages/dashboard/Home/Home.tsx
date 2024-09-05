@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from '../../../redux/store.tsx';
 import { getEvents } from '../../../redux/reducers/EventSlice.tsx';
 import { Event } from '../../../constant/types/event.ts';
 import { getCurrentEvent } from '../../../redux/reducers/SessionSlice.tsx';
+import { useNavigate } from 'react-router-dom';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#e1f5fe' : '#e1f5fe',
   ...theme.typography.h5,
@@ -27,6 +28,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Home() {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const events = useSelector<RootState, Event[]>(
     (state: RootState) => state?.event.events,
@@ -37,9 +39,10 @@ function Home() {
   useEffect(() => {
     dispatch(getEvents());
   }, []);
-  const openEvent = (id: number) => {
-    console.log('jjj');
-    dispatch(getCurrentEvent(id));
+
+  const openEvent = async (id: number) => {
+    await dispatch(getCurrentEvent(id));
+    navigate('/dashboard/event/');
   };
   return (
     <React.Fragment>
@@ -71,7 +74,7 @@ function Home() {
               <Stack spacing={2}>
                 {loadingEvent ? (
                   <CircularProgress />
-                ) : (
+                ) : Array.isArray(events) && events.length > 0 ? (
                   events.map((value, index) => (
                     <Item key={index}>
                       <Typography variant={'h5'} fontWeight={'bold'}>
@@ -99,6 +102,8 @@ function Home() {
                       </Box>
                     </Item>
                   ))
+                ) : (
+                  <p>در حال حاضر رویدادی موجود نیست.</p>
                 )}
               </Stack>
             </Box>

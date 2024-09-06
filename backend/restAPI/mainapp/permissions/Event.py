@@ -25,9 +25,11 @@ class IsEventParticipant(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj: Event):
         user = request.user
+        if user.is_superuser:
+            return True
         if user == obj.host:
             return True
-        for group in obj._groups:
+        for group in obj._groups.all():
             if user in group.members or user == obj.host:
                 return True
         return False

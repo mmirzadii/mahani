@@ -53,6 +53,7 @@ export const getCurrentEvent = createAsyncThunk<
     const response = await myAxios.get(`/event/${id}/`);
     return await camelcaseKeys(response.data, { deep: true });
   } catch (error) {
+    console.log(myAxios.defaults.headers);
     console.log(error);
     return rejectWithValue('دریافت آن رویداد ممکن نیست.');
   }

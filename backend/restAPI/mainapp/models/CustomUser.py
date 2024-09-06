@@ -38,7 +38,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     city = models.CharField(max_length=30)
     school = models.CharField(max_length=50)
     birth_date = models.DateField(null=True,blank=True)
-    phone_number = models.CharField(max_length=20, validators=[
+    phone_number = models.CharField(max_length=20,unique=True, validators=[
         RegexValidator(regex=r'^(\+?\d{1,3})?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$')])
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

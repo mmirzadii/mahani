@@ -6,4 +6,4 @@ class Group(models.Model):
     manager = models.ForeignKey("mainapp.CustomUser",related_name="_groups", on_delete=models.CASCADE)
     members = models.ManyToManyField("mainapp.CustomUser", related_name="event_groups")
     event = models.ForeignKey("mainapp.Event",related_name="_groups",on_delete=models.CASCADE)
-    score = models.IntegerField()
+    score = models.IntegerField(default=0)

@@ -8,8 +8,8 @@ import Home from '../pages/dashboard/Home/Home.tsx';
 import DashboardProvider from '../pages/dashboard/DashboardProvider.tsx';
 import ProfilePage from '../pages/dashboard/Profile/Index.tsx';
 import Sidebar from '../pages/dashboard/Sidebar.tsx';
-import EventPage from '../pages/dashboard/Event/Mainpage/Index.tsx';
-import ManageEventPage from '../pages/dashboard/ManageEvent/Index.tsx';
+import EventPage from '../pages/dashboard/Event/MainPage/Index.tsx';
+import ManageEventPage from '../pages/dashboard/Event/ManageEvent/Index.tsx';
 import EventProvider from '../pages/dashboard/Event/EventProvider.tsx';
 
 const router = createBrowserRouter([
@@ -66,10 +66,11 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
+            path: ':id',
             element: <EventPage />,
           },
           {
-            path: 'manage/',
+            path: 'manage/:eventId',
             element: <ManageEventPage />,
           },
         ],

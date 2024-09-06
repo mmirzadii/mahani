@@ -8,7 +8,7 @@ import { MakeRequired } from '../../functional/TypeConvert.tsx';
 
 export const getGroups = createAsyncThunk<
   Group[],
-  void,
+  number,
   { rejectValue: string }
 >('group/get', async (group_id, { rejectWithValue }) => {
   try {
@@ -17,6 +17,7 @@ export const getGroups = createAsyncThunk<
     });
     return await camelcaseKeys(response.data.results, { deep: true });
   } catch (error) {
+    console.log(error);
     console.log(error);
     if (error instanceof AxiosError && error.response) {
       return rejectWithValue(error.response.data.message || 'Request failed');
@@ -27,9 +28,9 @@ export const getGroups = createAsyncThunk<
 
 export const createGroup = createAsyncThunk<
   Group,
-  Group,
+  { name: string; manager: string; members: string[]; event: number },
   { rejectValue: string }
->('group/create', async (group: Group, { rejectWithValue }) => {
+>('group/create', async (group, { rejectWithValue }) => {
   try {
     const sentData = camelToSnake(group);
     const response = await myAxios.post('/group/', sentData);

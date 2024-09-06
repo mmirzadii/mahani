@@ -18,7 +18,7 @@ class EventViewSet(viewsets.ModelViewSet):
     ordering_fields = "__all__"
 
     def get_permissions(self):
-        permission_classes = [IsAuthenticated,IsEventParticipant]
+        permission_classes = [IsAuthenticated]
         if self.action != 'list' and self.action != 'retrieve':
             permission_classes.append(IsAdminUser)
         return [permission() for permission in permission_classes]

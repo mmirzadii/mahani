@@ -3,11 +3,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
-import { Stack, styled } from '@mui/material';
+import { CircularProgress, Stack, styled } from '@mui/material';
 import GroupsIcon from '@mui/icons-material/Groups';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../redux/store.tsx';
-import { Group } from '../../../../constant/types/event.ts';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../../redux/store.tsx';
+import { Event, Group } from '../../../../constant/types/event.ts';
+import { useEffect, useState } from 'react';
+import { getGroups } from '../../../../redux/reducers/GroupSlice.tsx';
 
 const GList = styled(List)(({ theme }) => ({
   backgroundColor: 'black',
@@ -28,8 +30,25 @@ export default function GroupList() {
   const groups = useSelector<RootState, Group[]>(
     (state) => state?.group.groups,
   );
+  const currentEvent = useSelector<RootState, Event | null>(
+    (state) => state?.session.currentEvent,
+  );
+  const dispatch = useDispatch<AppDispatch>();
 
-  return (
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLoading(true);
+    if (!currentEvent) {
+      setLoading(false);
+      return;
+    }
+    dispatch(getGroups(currentEvent.id)).finally(() => {
+      setLoading(false);
+    });
+  }, [currentEvent]);
+
+  return !loading ? (
     <Stack>
       <GList sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {groups.map((group) => (
@@ -55,5 +74,7 @@ export default function GroupList() {
         ))}
       </GList>
     </Stack>
+  ) : (
+    <CircularProgress />
   );
 }

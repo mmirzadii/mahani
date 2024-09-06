@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import myAxios from '../../setting/connectApi';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import LoadingModal from '../../components/LoadingModal';
@@ -13,15 +12,6 @@ function DashboardProvider(props: any) {
 
   useEffect(() => {
     setLoading(true);
-    const token = localStorage.getItem('token-access');
-
-    if (!token) {
-      navigate('/login'); // Ensure the path matches your route
-      return;
-    }
-
-    myAxios.defaults.headers['Authorization'] = `Bearer ${token}`;
-
     dispatch(getProfile())
       .unwrap()
       .catch(() => {

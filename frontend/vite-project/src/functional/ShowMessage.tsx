@@ -5,7 +5,7 @@ const MySwal = withReactContent(Swal);
 
 const showAlert = (
   status: 'success' | 'error' | null,
-  message = '',
+  message: string = '',
   callback = () => {},
 ) => {
   if (status == null) {

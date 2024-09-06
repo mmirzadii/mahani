@@ -11,7 +11,7 @@ export interface Event {
 
 export interface Group {
   event: number;
-  id: number;
+  id?: number;
   name: string;
   manager: User;
   members: User[];

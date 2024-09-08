@@ -35,9 +35,9 @@ function ManageEventPage() {
   }, [eventId, navigate]);
 
   return !loading ? (
-    <Container maxWidth={false}>
+    <Container maxWidth={'lg'}>
       <Grid container>
-        <Grid item xs={12} md={6} sx={{}}>
+        <Grid item xs={12} md={6}>
           <AddGroup />
         </Grid>
         <Grid item xs={12} md={6}>

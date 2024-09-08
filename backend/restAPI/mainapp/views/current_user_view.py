@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from mainapp.models import CustomUser
-from mainapp.serializers import CustomUserSerializer
+from mainapp.serializers import DetailedCustomUserSerializer, CreateCustomUserSerializer
 
 
 class ProtectedView(views.APIView):
@@ -14,7 +14,7 @@ class ProtectedView(views.APIView):
         try:
 
             user = request.user
-            serializer = CustomUserSerializer(user)
+            serializer = DetailedCustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -24,7 +24,7 @@ class ProtectedView(views.APIView):
     def patch(self, request):
         try:
             user = request.user
-            serializer = CustomUserSerializer(user, data=request.data, partial=True)
+            serializer = CreateCustomUserSerializer(user, data=request.data, partial=True)
 
             if serializer.is_valid():
                 serializer.save()

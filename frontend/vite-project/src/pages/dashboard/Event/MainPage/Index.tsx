@@ -1,15 +1,14 @@
-import { Grid, Stack } from '@mui/material';
+import { Grid } from '@mui/material';
 import GroupList from './GroupList.tsx';
-import { Button } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../../redux/store.tsx';
-import { User } from '../../../../constant/types/user.ts';
 import { Event } from '../../../../constant/types/event.ts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import LoadingModal from '../../../../components/LoadingModal.tsx';
 import { getCurrentEvent } from '../../../../redux/reducers/SessionSlice.tsx';
+import AssignmentList from './AssignmentList.tsx';
+import EventInfo from './EventInfo.tsx';
 
 function EventPage() {
   const navigate = useNavigate();
@@ -39,9 +38,6 @@ function EventPage() {
     } catch (e) {}
   }, [id, navigate]);
 
-  const currentUser = useSelector<RootState, User | null>(
-    (state) => state.session.currentUser,
-  );
   const currentEvent = useSelector<RootState, Event | null>(
     (state) => state.session.currentEvent,
   );
@@ -49,35 +45,15 @@ function EventPage() {
     <LoadingModal open={loading} onClose={() => setLoading(false)} />
   ) : (
     <Grid container>
-      <Grid item xs={12} md={3} sx={{ height: '100vh', maxHeight: '100vh' }}>
-        <Stack display={'flex'} justifyContent={'center'}>
-          {currentUser?.isSuperuser && (
-            <Button
-              variant={'contained'}
-              color={'warning'}
-              sx={{
-                marginTop: 1.5,
-                marginBottom: 1.5,
-                width: '90%',
-                marginLeft: 1.5,
-              }}
-              endIcon={<SettingsIcon />}
-              onClick={() => {
-                navigate(`/dashboard/event/manage/${currentEvent?.id}`);
-              }}
-            >
-              مدیریت رویداد
-            </Button>
-          )}
-          <GroupList />
-        </Stack>
+      <Grid item xs={12} md={3}>
+        <GroupList />
       </Grid>
-      <Grid
-        item
-        xs={12}
-        md={9}
-        sx={{ height: '1000px', backgroundColor: 'blue' }}
-      ></Grid>
+      <Grid item xs={12} md={5}>
+        <EventInfo event={currentEvent} />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <AssignmentList />
+      </Grid>
     </Grid>
   );
 }

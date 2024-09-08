@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from mainapp.models.CustomUser import CustomUser
-from mainapp.serializers import CustomUserSerializer
+from mainapp.serializers import CustomUserSerializer, DetailedCustomUserSerializer, CreateCustomUserSerializer
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -13,6 +13,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     ordering_fields = "__all__"
 
     def get_serializer_class(self):
+        if self.action == 'create' or self.action == 'partial_update':
+            return CreateCustomUserSerializer
+        if self.request.user.is_staff:
+            return DetailedCustomUserSerializer
+
         return CustomUserSerializer
 
     def get_permissions(self):
@@ -30,5 +35,3 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-

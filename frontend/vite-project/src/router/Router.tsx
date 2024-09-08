@@ -9,8 +9,9 @@ import DashboardProvider from '../pages/dashboard/DashboardProvider.tsx';
 import ProfilePage from '../pages/dashboard/Profile/Index.tsx';
 import Sidebar from '../pages/dashboard/Sidebar.tsx';
 import EventPage from '../pages/dashboard/Event/MainPage/Index.tsx';
-import ManageEventPage from '../pages/dashboard/Event/ManageEvent/Index.tsx';
 import EventProvider from '../pages/dashboard/Event/EventProvider.tsx';
+import AddAssignment from '../pages/dashboard/Event/ManageEvent/AddAssignment.tsx';
+import AddGroup from '../pages/dashboard/Event/ManageEvent/AddGroup.tsx';
 
 const router = createBrowserRouter([
   {
@@ -70,8 +71,17 @@ const router = createBrowserRouter([
             element: <EventPage />,
           },
           {
-            path: 'manage/:eventId',
-            element: <ManageEventPage />,
+            path: 'manage/',
+            children: [
+              {
+                path: 'add-assignment/',
+                element: <AddAssignment />,
+              },
+              {
+                path: 'add-group/',
+                element: <AddGroup />,
+              },
+            ],
           },
         ],
       },

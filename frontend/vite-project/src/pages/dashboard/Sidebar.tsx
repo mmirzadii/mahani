@@ -14,10 +14,10 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Menu, Home, Lock } from '@mui/icons-material';
+import { Menu, Home, Lock, ArrowBack } from '@mui/icons-material'; // Import ArrowBack icon
 import { useState } from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 
 const listItems = [
   {
@@ -39,6 +39,7 @@ const listItems = [
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize navigate for back navigation
 
   const toggleSlider = () => {
     setOpen(!open);
@@ -48,7 +49,6 @@ export default function Sidebar() {
     <Box
       style={{
         width: 250,
-
         height: '100%',
       }}
       component="div"
@@ -69,11 +69,7 @@ export default function Sidebar() {
 
       <List>
         {listItems.map((listItem, index) => (
-          <Link
-            key={index}
-            to={listItem.path}
-            // style={{ textDecoration: 'none', color: 'inherit' }}
-          >
+          <Link key={index} to={listItem.path}>
             <ListItem
               style={{
                 color: '#6c5b42',
@@ -101,18 +97,35 @@ export default function Sidebar() {
 
       <Box component="nav">
         <AppBar position="static" style={{ height: '80px' }}>
-          <Toolbar style={{ minHeight: '80px' }}>
-            {' '}
-            {/* Ensures Toolbar matches the AppBar height */}
+          <Toolbar
+            style={{
+              minHeight: '80px',
+            }}
+          >
+            {/* Back Button */}
+
+            {/* Toggle Drawer */}
             <IconButton onClick={toggleSlider} size="large">
               <Menu />
             </IconButton>
+
+            {/* Title */}
             <Typography style={{ marginRight: '2rem', fontSize: '1.5rem' }}>
               انجمن ریاضی ماهانی
             </Typography>
+
+            {/* Drawer */}
             <Drawer open={open} anchor="right" onClose={toggleSlider}>
               {sideList()}
             </Drawer>
+
+            <IconButton
+              sx={{ position: 'fixed', right: 5 }}
+              onClick={() => navigate(-1)}
+              size="large"
+            >
+              <ArrowBack />
+            </IconButton>
           </Toolbar>
         </AppBar>
       </Box>

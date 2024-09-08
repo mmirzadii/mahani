@@ -7,15 +7,18 @@ import camelToSnake from '../../functional/ConvertCase.tsx';
 import { MakeRequired } from '../../functional/TypeConvert.tsx';
 
 export const getGroups = createAsyncThunk<
-  Group[],
-  number,
+  { groups: Group[]; nextPage: string | null },
+  { event: number; page: number },
   { rejectValue: string }
->('group/get', async (group_id, { rejectWithValue }) => {
+>('group/get', async ({ event, page }, { rejectWithValue }) => {
   try {
     const response = await myAxios.get(`/group/`, {
-      params: { event: group_id },
+      params: { event, offset: page, limit: 20 },
     });
-    return await camelcaseKeys(response.data.results, { deep: true });
+    return await camelcaseKeys(
+      { groups: response.data.results, nextPage: response.data.next },
+      { deep: true },
+    );
   } catch (error) {
     console.log(error);
     console.log(error);
@@ -55,7 +58,7 @@ export const editGroup = createAsyncThunk<
   }
 });
 
-export const deletegroup = createAsyncThunk<
+export const deleteGroup = createAsyncThunk<
   number,
   number,
   { rejectValue: string }
@@ -70,16 +73,12 @@ export const deletegroup = createAsyncThunk<
 
 export interface GroupState {
   groups: Group[];
-  loading: boolean;
-  message: string | undefined;
-  status: 'success' | 'error' | null;
+  nextPage: string | null;
 }
 
 const initialState: GroupState = {
   groups: [],
-  loading: false,
-  message: '',
-  status: null,
+  nextPage: '',
 };
 
 const groupSlice = createSlice({
@@ -88,59 +87,20 @@ const groupSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getGroups.fulfilled, (state, action) => {
-      state.groups = action.payload;
-      state.status = 'success';
-      state.loading = false;
-    });
-    builder.addCase(getGroups.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getGroups.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
+      state.groups = action.payload.groups;
+      state.nextPage = action.payload.nextPage;
     });
     builder.addCase(createGroup.fulfilled, (state, action) => {
       state.groups.push(action.payload);
-      state.status = 'success';
-      state.loading = false;
-    });
-    builder.addCase(createGroup.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(createGroup.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
     });
     builder.addCase(editGroup.fulfilled, (state, action) => {
       state.groups = state.groups.filter(
         (group) => group.id == action.payload.id,
       );
       state.groups.push(action.payload);
-      state.status = 'success';
-      state.loading = false;
     });
-    builder.addCase(editGroup.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(editGroup.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
-    });
-    builder.addCase(deletegroup.fulfilled, (state, action) => {
+    builder.addCase(deleteGroup.fulfilled, (state, action) => {
       state.groups = state.groups.filter((group) => group.id != action.payload);
-      state.status = 'success';
-      state.loading = false;
-    });
-    builder.addCase(deletegroup.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(deletegroup.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
     });
   },
 });

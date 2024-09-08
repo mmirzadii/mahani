@@ -5,6 +5,7 @@ export interface Event {
   name: string;
   username: string;
   description: string;
+  detailedDescription?: string;
   host?: User;
   assignments?: Assignment[];
 }
@@ -15,17 +16,16 @@ export interface Group {
   name: string;
   manager: User;
   members: User[];
+  score?: number;
 }
 
 export interface Assignment {
   event: number;
-  id: number;
+  id?: number;
   name: string;
   description: string;
-  content?: File | null;
-  questions: Question[];
-  messages: Message[];
-  timestamp: string;
+  content?: File | string | null;
+  timestamp?: string;
 }
 
 export interface Question {

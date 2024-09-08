@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -70,7 +71,6 @@ TEMPLATES = [
     },
 ]
 
-
 AUTH_USER_MODEL = 'mainapp.CustomUser'
 
 WSGI_APPLICATION = 'project.wsgi.application'
@@ -129,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  # Token valid for 1 hour
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7*5),  # Refresh token valid for 7 days
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7 * 5),  # Refresh token valid for 7 days
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
@@ -143,6 +143,7 @@ CORS_ALLOWED_ORIGINS = [
 # delete it after development
 CORS_ALLOW_ALL_ORIGINS = True
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -153,6 +154,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

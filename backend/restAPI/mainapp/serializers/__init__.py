@@ -1,4 +1,4 @@
-from .CustomUser import CustomUserSerializer
+from .CustomUser import CustomUserSerializer,CreateCustomUserSerializer,DetailedCustomUserSerializer
 from .Event import EventSerializer
 from .Message import MessageSerializer
 from .Assignment import AssignmentSerializer

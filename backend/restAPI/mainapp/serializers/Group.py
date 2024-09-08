@@ -1,8 +1,12 @@
 from rest_framework import serializers
 from mainapp.models import Group, CustomUser, Event
+from mainapp.serializers import CustomUserSerializer
 
 
 class GroupSerializer(serializers.ModelSerializer):
+    manager = CustomUserSerializer(read_only=True)  # Serialize manager with the user serializer
+    members = CustomUserSerializer(many=True, read_only=True)  # Serialize members as a list of users
+
     class Meta:
         model = Group
         fields = "__all__"

@@ -7,15 +7,18 @@ import camelToSnake from '../../functional/ConvertCase.tsx';
 import { MakeRequired } from '../../functional/TypeConvert.tsx';
 
 export const getAssignments = createAsyncThunk<
-  Assignment[],
-  void,
+  { assignments: Assignment[]; nextPage: string | null },
+  { event: number; page: number },
   { rejectValue: string }
->('assignment/get', async (event_id, { rejectWithValue }) => {
+>('assignments/get', async ({ event, page }, { rejectWithValue }) => {
   try {
     const response = await myAxios.get(`/assignment/`, {
-      params: { event: event_id },
+      params: { event, offset: page, limit: 10 },
     });
-    return await camelcaseKeys(response.data.results, { deep: true });
+    return await camelcaseKeys(
+      { assignments: response.data.results, nextPage: response.data.next },
+      { deep: true },
+    );
   } catch (error) {
     console.log(error);
     if (error instanceof AxiosError && error.response) {
@@ -25,14 +28,17 @@ export const getAssignments = createAsyncThunk<
   }
 });
 
-export const createAssignments = createAsyncThunk<
+export const createAssignment = createAsyncThunk<
   Assignment,
   Assignment,
   { rejectValue: string }
 >('assignment/create', async (assignment: Assignment, { rejectWithValue }) => {
   try {
-    const sentData = camelToSnake(assignment);
-    const response = await myAxios.post('/assignment/', sentData);
+    const response = await myAxios.post('/assignment/', assignment, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return await camelcaseKeys(response.data, { deep: true });
   } catch (error) {
     return rejectWithValue('not ');
@@ -72,16 +78,12 @@ export const deleteAssignment = createAsyncThunk<
 
 export interface AssignmentState {
   assignments: Assignment[];
-  loading: boolean;
-  message: string | undefined;
-  status: 'success' | 'error' | null;
+  nextPage: string | null;
 }
 
 const initialState: AssignmentState = {
   assignments: [],
-  loading: false,
-  message: '',
-  status: null,
+  nextPage: '',
 };
 
 const assignmentSlice = createSlice({
@@ -90,61 +92,22 @@ const assignmentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAssignments.fulfilled, (state, action) => {
-      state.assignments = action.payload;
-      state.status = 'success';
-      state.loading = false;
+      state.assignments = action.payload.assignments;
+      state.nextPage = action.payload.nextPage;
     });
-    builder.addCase(getAssignments.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getAssignments.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
-    });
-    builder.addCase(createAssignments.fulfilled, (state, action) => {
+    builder.addCase(createAssignment.fulfilled, (state, action) => {
       state.assignments.push(action.payload);
-      state.status = 'success';
-      state.loading = false;
-    });
-    builder.addCase(createAssignments.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(createAssignments.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
     });
     builder.addCase(editAssignment.fulfilled, (state, action) => {
       state.assignments = state.assignments.filter(
         (assignment) => assignment.id == action.payload.id,
       );
       state.assignments.push(action.payload);
-      state.status = 'success';
-      state.loading = false;
-    });
-    builder.addCase(editAssignment.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(editAssignment.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
     });
     builder.addCase(deleteAssignment.fulfilled, (state, action) => {
       state.assignments = state.assignments.filter(
         (assignment) => assignment.id != action.payload,
       );
-      state.status = 'success';
-      state.loading = false;
-    });
-    builder.addCase(deleteAssignment.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(deleteAssignment.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
     });
   },
 });

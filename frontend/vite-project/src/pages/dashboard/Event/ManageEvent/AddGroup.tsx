@@ -47,7 +47,7 @@ const validationSchema = yup.object().shape({
         ),
     )
     .min(2, 'حداقل تعداد اعضا دو است.')
-    .max(3, 'حداکثر تعداد اعضا سه است.'),
+    .max(4, 'حداکثر تعداد اعضا سه است.'),
 });
 
 const AddGroup = () => {
@@ -81,6 +81,7 @@ const AddGroup = () => {
     if (!currentEvent) {
       return;
     }
+    console.log(data);
     dispatch(createGroup({ ...data, event: currentEvent.id }))
       .unwrap()
       .then(() => {
@@ -96,7 +97,7 @@ const AddGroup = () => {
       <CssBaseline />
       <Box
         sx={{
-          marginTop: 8,
+          margin: 2,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

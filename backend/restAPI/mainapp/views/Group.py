@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from mainapp.models import Group, Event
 from mainapp.serializers.Group import GroupSerializer, CreateGroupSerializer
@@ -6,7 +7,8 @@ from mainapp.serializers.Group import GroupSerializer, CreateGroupSerializer
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
-
+    http_method_names = ("get","patch","post","delete")
+    authentication_classes = [JWTAuthentication]
     def get_serializer_class(self):
         if self.action == 'create':
             return CreateGroupSerializer

@@ -36,6 +36,7 @@ export interface Question {
 }
 
 export interface Message {
+  id?: number;
   assignment: number;
   sender: User;
   content: string;

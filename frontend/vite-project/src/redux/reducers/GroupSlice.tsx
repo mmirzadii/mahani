@@ -87,7 +87,7 @@ const groupSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getGroups.fulfilled, (state, action) => {
-      state.groups = action.payload.groups;
+      state.groups.push(...action.payload.groups);
       state.nextPage = action.payload.nextPage;
     });
     builder.addCase(createGroup.fulfilled, (state, action) => {

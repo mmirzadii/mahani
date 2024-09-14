@@ -4,6 +4,7 @@ import sessionReducer from './reducers/SessionSlice.tsx';
 import userReducer from './reducers/UserSlice.tsx';
 import groupReducer from './reducers/GroupSlice.tsx';
 import assignmentReducer from './reducers/AssignmentSlice.tsx';
+import messageReducer from './reducers/MessageSlice.tsx';
 
 const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
     user: userReducer,
     event: eventReducer,
     group: groupReducer,
+    message: messageReducer,
     assignment: assignmentReducer,
   },
 });

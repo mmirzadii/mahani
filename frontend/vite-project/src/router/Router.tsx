@@ -12,6 +12,7 @@ import EventPage from '../pages/dashboard/Event/MainPage/Index.tsx';
 import EventProvider from '../pages/dashboard/Event/EventProvider.tsx';
 import AddAssignment from '../pages/dashboard/Event/ManageEvent/AddAssignment.tsx';
 import AddGroup from '../pages/dashboard/Event/ManageEvent/AddGroup.tsx';
+import AssignmentPage from '../pages/dashboard/Event/AssignmentPage/Index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
             index: true,
             path: ':id',
             element: <EventPage />,
+          },
+          {
+            path: 'assignment/:id',
+            element: <AssignmentPage />,
           },
           {
             path: 'manage/',

@@ -5,15 +5,18 @@ import camelcaseKeys from 'camelcase-keys';
 import { AxiosError } from 'axios';
 
 export const getMessages = createAsyncThunk<
-  Message[],
-  void,
+  { messages: Message[]; nextPage: string | null },
+  { assignment: number; page: number },
   { rejectValue: string }
->('message/get', async (message_id, { rejectWithValue }) => {
+>('message/get', async ({ assignment, page }, { rejectWithValue }) => {
   try {
     const response = await myAxios.get('/message/', {
-      params: { message_id },
+      params: { assignment, offset: page, limit: 80 },
     });
-    return await camelcaseKeys(response.data.results, { deep: true });
+    return await camelcaseKeys(
+      { messages: response.data.results, nextPage: response.data.next },
+      { deep: true },
+    );
   } catch (error) {
     console.log(error);
     if (error instanceof AxiosError && error.response) {
@@ -25,16 +28,12 @@ export const getMessages = createAsyncThunk<
 
 export interface MessageState {
   messages: Message[];
-  loading: boolean;
-  message: string | undefined;
-  status: 'success' | 'error' | null;
+  nextPage: string | null;
 }
 
 const initialState: MessageState = {
   messages: [],
-  loading: false,
-  message: '',
-  status: null,
+  nextPage: '',
 };
 
 const messageSlice = createSlice({
@@ -43,17 +42,8 @@ const messageSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getMessages.fulfilled, (state, action) => {
-      state.messages = action.payload;
-      state.status = 'success';
-      state.loading = false;
-    });
-    builder.addCase(getMessages.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getMessages.rejected, (state, action) => {
-      state.status = 'error';
-      state.message = action.payload;
-      state.loading = false;
+      state.messages.push(...action.payload.messages);
+      state.nextPage = action.payload.nextPage;
     });
   },
 });

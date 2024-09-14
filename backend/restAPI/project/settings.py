@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'mainapp',
     'rest_framework.authtoken',
     'corsheaders',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -143,7 +144,6 @@ CORS_ALLOWED_ORIGINS = [
 # delete it after development
 CORS_ALLOW_ALL_ORIGINS = True
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -157,6 +157,18 @@ USE_TZ = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# channels_config
+ASGI_APPLICATION = "mainapp.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 8000)],  # Ensure Redis is running on this host/port
+        },
+    },
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

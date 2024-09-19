@@ -12,7 +12,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     ordering_fields = "__all__"
 
     def get_queryset(self):
-        assignment_id = self.kwargs.get("assignment_id")
+        assignment_id = self.request.query_params.get('assignment')
         try:
             assignment = Assignment.objects.get(id=assignment_id)
         except:

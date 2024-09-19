@@ -5,6 +5,7 @@ import userReducer from './reducers/UserSlice.tsx';
 import groupReducer from './reducers/GroupSlice.tsx';
 import assignmentReducer from './reducers/AssignmentSlice.tsx';
 import messageReducer from './reducers/MessageSlice.tsx';
+import questionReducer from './reducers/QuestionSlice.tsx';
 
 const store = configureStore({
   reducer: {
@@ -14,7 +15,9 @@ const store = configureStore({
     group: groupReducer,
     message: messageReducer,
     assignment: assignmentReducer,
+    question: questionReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

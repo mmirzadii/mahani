@@ -67,12 +67,11 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            index: true,
             path: ':id',
             element: <EventPage />,
           },
           {
-            path: 'assignment/:id',
+            path: 'assignment/:assignmentId',
             element: <AssignmentPage />,
           },
           {

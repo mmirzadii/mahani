@@ -29,10 +29,12 @@ export interface Assignment {
 }
 
 export interface Question {
+  id?: number;
   assignment: number;
   name: string;
   text: string;
   context?: File | null;
+  maxScore?: number;
 }
 
 export interface Message {
@@ -40,14 +42,14 @@ export interface Message {
   assignment: number;
   sender: User;
   content: string;
-  timeStamp: string;
+  timeStamp?: string;
 }
 
 export interface SentAssignment {
   group: number;
   question: Question;
   assignment: Assignment;
-  content?: File | null;
+  content?: File | string | null;
   score: number;
   maxScore: number;
 }

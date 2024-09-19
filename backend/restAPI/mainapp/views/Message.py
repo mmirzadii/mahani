@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from mainapp.models import Assignment
 from mainapp.models.Message import Message
 from mainapp.serializers import MessageSerializer
+from mainapp.serializers.Message import CreateMessageSerializer
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -13,7 +14,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     ordering_fields = "__all__"
 
     def get_queryset(self):
-        assignment_id = self.kwargs.get("assignment_id")
+        assignment_id = self.request.query_params.get("assignment")
         try:
             assignment = Assignment.objects.get(id=assignment_id)
         except:
@@ -21,4 +22,6 @@ class MessageViewSet(viewsets.ModelViewSet):
         return Message.objects.filter(assignment=assignment)
 
     def get_serializer_class(self):
+        if self.action == 'create':
+            return CreateMessageSerializer
         return MessageSerializer

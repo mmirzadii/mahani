@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Container,
   Box,
@@ -18,10 +18,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../../redux/store.tsx';
 import { Message } from '../../../../constant/types/event.ts';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { getMessages } from '../../../../redux/reducers/MessageSlice.tsx';
+import {
+  createMessage,
+  getMessages,
+} from '../../../../redux/reducers/MessageSlice.tsx';
 import { useNavigate } from 'react-router-dom';
+import { User } from '../../../../constant/types/user.ts';
+import { AssignmentContext } from './Index.tsx';
 
-const ChatRoom = ({ assignmentId }: { assignmentId: string | undefined }) => {
+const ChatRoom = () => {
+  const assignment = useContext(AssignmentContext);
   const navigate = useNavigate();
   const messages = useSelector<RootState, Message[]>(
     (state) => state?.message.messages,
@@ -29,22 +35,45 @@ const ChatRoom = ({ assignmentId }: { assignmentId: string | undefined }) => {
   const nextPage = useSelector<RootState, string | null>(
     (state) => state?.message.nextPage,
   );
+  const currentUser = useSelector<RootState, User | null>(
+    (state) => state?.session.currentUser,
+  );
   const [newMessage, setNewMessage] = useState('');
   const [page, setPage] = useState<number>(0);
+  const messageBox = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
-    if (!assignmentId) {
+    if (!assignment || !assignment.id) {
       return;
     }
     try {
-      const numericAssignmentId = parseInt(assignmentId);
+      const numericAssignmentId = assignment.id;
       dispatch(getMessages({ assignment: numericAssignmentId, page }));
     } catch (e) {
       navigate(-1);
     }
   }, [page, dispatch]);
 
-  const handleSendMessage = () => {};
+  useEffect(() => {
+    if (messageBox.current) {
+      messageBox.current.scrollTop = messageBox.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleSendMessage = () => {
+    if (!assignment?.id || !currentUser || !currentUser?.id) {
+      return;
+    }
+
+    dispatch(
+      createMessage({
+        assignment: assignment.id,
+        content: newMessage,
+        sender: currentUser.id,
+      }),
+    );
+    setNewMessage('');
+  };
 
   const fetchMoreData = () => {
     setPage((prevState) => prevState + 1);
@@ -54,11 +83,12 @@ const ChatRoom = ({ assignmentId }: { assignmentId: string | undefined }) => {
     <Container
       maxWidth="sm"
       sx={{
-        marginTop: 8,
+        marginTop: 2,
         marginBottom: 8,
         padding: 0,
         height: '80vh',
         display: 'flex',
+
         flexDirection: 'column',
       }}
     >
@@ -70,6 +100,7 @@ const ChatRoom = ({ assignmentId }: { assignmentId: string | undefined }) => {
           display: 'flex',
           flexDirection: 'column',
           flexGrow: 1,
+          overflow: 'auto',
         }}
       >
         <Typography
@@ -84,12 +115,13 @@ const ChatRoom = ({ assignmentId }: { assignmentId: string | undefined }) => {
         <Box
           sx={{
             flexGrow: 1,
-            overflowY: 'auto',
+            overflow: 'auto',
             padding: 2,
             backgroundColor: '#f5f5f5',
             borderRadius: 2,
             marginBottom: 2,
           }}
+          ref={messageBox}
         >
           <List>
             <InfiniteScroll
@@ -108,28 +140,30 @@ const ChatRoom = ({ assignmentId }: { assignmentId: string | undefined }) => {
               }
             >
               {messages &&
-                messages.map((message) => (
-                  <React.Fragment key={message.id}>
-                    <ListItem alignItems="flex-start">
-                      <Avatar sx={{ marginRight: 2 }}>
-                        {message.sender.firstName +
-                          ' ' +
-                          message.sender.lastName}
-                      </Avatar>
-                      <ListItemText
-                        primary={
-                          <Typography fontWeight="bold">
-                            {message.sender.firstName +
-                              ' ' +
-                              message.sender.lastName}
-                          </Typography>
-                        }
-                        secondary={message.content}
-                      />
-                    </ListItem>
-                    <Divider />
-                  </React.Fragment>
-                ))}
+                messages
+                  .filter((message) => message.assignment == assignment?.id)
+                  .map((message, index) => (
+                    <React.Fragment key={index}>
+                      <ListItem alignItems="flex-start">
+                        <Avatar sx={{ marginRight: 2 }}>
+                          {message.sender.firstName +
+                            ' ' +
+                            message.sender.lastName}
+                        </Avatar>
+                        <ListItemText
+                          primary={
+                            <Typography fontWeight="bold">
+                              {message.sender.firstName +
+                                ' ' +
+                                message.sender.lastName}
+                            </Typography>
+                          }
+                          secondary={message.content}
+                        />
+                      </ListItem>
+                      <Divider />
+                    </React.Fragment>
+                  ))}
             </InfiniteScroll>
           </List>
         </Box>

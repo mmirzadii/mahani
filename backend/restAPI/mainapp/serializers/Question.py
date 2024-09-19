@@ -6,7 +6,7 @@ from mainapp.serializers.SentQuestionAnswer import SentQuestionAnswerSerializer
 
 class QuestionSerializer(serializers.ModelSerializer):
     sentAssignments = (SentQuestionAnswerSerializer
-                       (many=True))
+                       (many=True,required=False))
 
     class Meta:
         model = Question
